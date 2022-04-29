@@ -64,6 +64,8 @@ public class ProgressListener : MonoBehaviour
         if (_coinCounter == _coinsCollected)
         {
             FinalPanel.SetActive(true);
+            _player.GetComponent<Player>().enabled = false;
+            _player.GetComponent<Collider>().enabled = false;
         }
     }
 
