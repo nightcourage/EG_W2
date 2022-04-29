@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        _rigidbody = gameObject.GetComponent<Rigidbody>();
+        _rigidbody = GetComponent<Rigidbody>();
         isAlive = true;
     }
 
