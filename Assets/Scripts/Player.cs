@@ -5,6 +5,7 @@ using System.Numerics;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
 public class Player : MonoBehaviour
@@ -12,6 +13,7 @@ public class Player : MonoBehaviour
     public int Speed = 10;
     public int BoostMultiplier = 3;
     public int RotationSpeed = 10;
+    private Vector3 _eulerAngeleVelocity;
     public ProgressListener ProgressListener;
     public bool isAlive;
     
@@ -20,12 +22,24 @@ public class Player : MonoBehaviour
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _eulerAngeleVelocity = new Vector3(0, RotationSpeed, 0);
         isAlive = true;
     }
 
     private void Update()
     {
+        float translationHorizontal = Input.GetAxis("Horizontal");
+        float translationVertical = Input.GetAxis("Vertical");
 
+        if (Input.GetKeyDown(KeyCode.RightShift))
+        {
+            ChargePlayer(translationHorizontal, translationVertical);
+        }
+        else
+        {
+            MovePlayer(translationHorizontal, translationVertical);
+        }
+        
         if (Input.GetKey(KeyCode.Q))
         {
             int direction = -1;
@@ -41,23 +55,12 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        float translationHorizontal = Input.GetAxis("Horizontal");
-        float translationVertical = Input.GetAxis("Vertical");
-
-        if (Input.GetKeyDown(KeyCode.RightShift))
-        {
-            ChargePlayer(translationHorizontal, translationVertical);
-        }
-        else
-        {
-            MovePlayer(translationHorizontal, translationVertical);
-        }
     }
 
     private void MovePlayer(float translationHorizontal, float translationVertical)
     {
         float finalSpeed = Speed * Time.deltaTime;
-        _rigidbody.velocity = transform.TransformDirection(new Vector3(translationHorizontal * finalSpeed, 0, translationVertical * finalSpeed));
+        _rigidbody.velocity = transform.TransformDirection(new Vector3(translationHorizontal, 0, translationVertical).normalized * finalSpeed);
     }
 
     private void ChargePlayer(float translationHorizontal, float translationVertical)
@@ -69,7 +72,8 @@ public class Player : MonoBehaviour
 
     private void RotatePlayer(int direction)
     {
-        transform.rotation *= Quaternion.Euler(0, RotationSpeed * direction * Time.deltaTime, 0);
+        Quaternion deltaRotation = Quaternion.Euler(_eulerAngeleVelocity * (direction * Time.fixedDeltaTime));
+        _rigidbody.MoveRotation(_rigidbody.rotation * deltaRotation);
     }
 
     private void OnCollisionEnter(Collision collision)
