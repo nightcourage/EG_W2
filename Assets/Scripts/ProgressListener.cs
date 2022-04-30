@@ -9,8 +9,8 @@ public class ProgressListener : MonoBehaviour
 {
     public float minDistance = 0.1f;
     public TextMeshProUGUI TextTotal;
-    public TextMeshProUGUI TextCollected;
     public GameObject FinalPanel;
+    public GameObject ControlsPanel;
     public GameObject GameOverPanel;
     
     private int _coinCounter;
@@ -22,8 +22,7 @@ public class ProgressListener : MonoBehaviour
     {
         _player = FindObjectOfType<Player>();
         _coinCounter = CountCoinsAtStart();
-        TextTotal.text = "/" + _coinCounter.ToString();
-        TextCollected.text = _coinsCollected.ToString();
+        TextTotal.text = _coinsCollected.ToString() + " / " + _coinCounter.ToString();
         FinalPanel.SetActive(false);
         GameOverPanel.SetActive(false);
     }
@@ -31,7 +30,7 @@ public class ProgressListener : MonoBehaviour
     void Update()
     {
         CollectCoins();
-        TextCollected.text = _coinsCollected.ToString();
+        TextTotal.text = _coinsCollected.ToString() + " / " + _coinCounter.ToString();
         ShowFinalScreen();
     }
 
@@ -63,9 +62,9 @@ public class ProgressListener : MonoBehaviour
     {
         if (_coinCounter == _coinsCollected)
         {
+            ControlsPanel.SetActive(false);
             FinalPanel.SetActive(true);
             _player.GetComponent<Player>().enabled = false;
-            _player.GetComponent<Collider>().enabled = false;
         }
     }
 
