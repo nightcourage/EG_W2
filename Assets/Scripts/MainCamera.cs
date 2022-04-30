@@ -7,7 +7,7 @@ public class MainCamera : MonoBehaviour
     [SerializeField] private float _rotationDamping;
     [SerializeField] private float _height;
     private bool _isAlive;
-    private Vector3 _position;
+    private Vector3 _position; 
     private float _distance;
 
     private void Awake()
